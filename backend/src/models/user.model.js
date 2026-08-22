@@ -83,8 +83,8 @@ userSchema.pre("save", function () {
   }
 });
 
-userSchema.method.comparePass = function (){
-    return bcrypt.compareSync(this.password,password)
+userSchema.methods.comparePass = function (password){
+    return bcrypt.compareSync(password, this.password)
 }
 
 
