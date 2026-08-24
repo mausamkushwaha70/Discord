@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
-config.dotenv();
+dotenv.config();
 import Imagekit from "imagekit";
 
 const storageInstance = new Imagekit({
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-    privatekey: process.env.IMAGEKIT_PRIVATE_KEY,
-    urlEndPoint: process.env.IMAGEKIT_URL_ENDPOINT,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
 export const sendFile = async (file, fileName) => {
@@ -15,5 +15,5 @@ export const sendFile = async (file, fileName) => {
         folderName: "Discord",
     };
 
-    return storageInstance.upload(obj);
+    return await storageInstance.upload(obj);
 };
