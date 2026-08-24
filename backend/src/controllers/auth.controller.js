@@ -127,3 +127,76 @@ export const userLoginController = async (req, res) => {
     isExist,
   });
 };
+
+export const googleAuthcontroller = async (req, res) => {
+  try {
+    const {email, name, given_name, picture, sub } = req.user._json;
+  console.log(req.user);
+  const user = await userModel.findOne({ email });
+
+  if (user) {
+    if (!user.googleId) {
+      user.googleId = sub;
+      await user.save();
+    }
+
+    const accessToken = tokenGenerate(user._id, "20min");
+    const refreshToken = tokenGenerate(user._id, "2d");
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      maxAge: 20 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 2 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "user loggedin successfully",
+      user,
+    });
+  }
+
+  const newUser = await userModel.create({
+    username:given_name,
+    fullName:name,
+    email,
+    profile_pic:picture,
+    googleId:sub,
+    authProvider:req.user.provider
+  })
+
+  const accessToken = generateToken(newUser._id,"15min")
+    const refreshToken = generateToken(newUser._id,"2d")
+
+
+    res.cookie("accessToken",accessToken,{
+        httpOnly:true,
+        maxAge:15*60*1000
+    })
+
+    res.cookie("refreshToken",refreshToken,{
+        httpOnly:true,
+        maxAge:2*24*60*60*1000
+    })
+
+    return res.status(201).json({
+        success:true,
+        message:"user register successfully",
+        newUser
+    })
+  } catch (error) {
+    console.log(error)
+      return res.status(500).json({
+        success:false,
+        message:"internal server error",
+        error:error.message
+      })
+    
+  }
+
+};
+
