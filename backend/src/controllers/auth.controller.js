@@ -1,6 +1,8 @@
 import { sendFile } from "../services/storage.service.js";
 import userModel from "../models/user.model.js";
 import { tokenGenerate } from "../utils/token.utils.js";
+import redis from "../config/redis.config.js";
+
 
 export const userRegisterController = async (req, res) => {
   try {
@@ -200,3 +202,31 @@ export const googleAuthcontroller = async (req, res) => {
 
 };
 
+export const userLogoutController = async (req,res)=>{
+  // before using redis three credentials is required
+  // host, port, password
+
+  try {
+    const {refreshToken,accessToken}= req.cookies;
+  if(accessToken){
+    await redis.set(`Bearer: accessToken: ${accessToken}`, "true")
+  }
+
+  if(refreshToken){
+    await redis.set(`Bearer: refreshToken: ${refreshToken}`, "true")
+  }
+
+  res.clearCookie("accessToken")
+  res.clearCookie("refreshToken")
+
+  return res.status(200).json({
+    success:true,
+    message:"logout successfully"
+  })
+  } catch (error) {
+    return res.status(500).json({
+    success:false,
+    error:error.message
+  })
+  }
+}
