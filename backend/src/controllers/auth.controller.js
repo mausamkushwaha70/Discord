@@ -1,7 +1,10 @@
 import { sendFile } from "../services/storage.service.js";
 import userModel from "../models/user.model.js";
+import bcrypt from "bcrypt";
 import { tokenGenerate } from "../utils/token.utils.js";
 import redis from "../config/redis.config.js";
+import { generateOTP } from "../utils/otp.utill.js";
+
 
 
 export const userRegisterController = async (req, res) => {
@@ -215,6 +218,7 @@ export const userLogoutController = async (req,res)=>{
   if(refreshToken){
     await redis.set(`Bearer: refreshToken: ${refreshToken}`, "true")
   }
+  // await redis.set(`tokenblackelisted${accessToken}`,true)
 
   res.clearCookie("accessToken")
   res.clearCookie("refreshToken")
@@ -229,4 +233,33 @@ export const userLogoutController = async (req,res)=>{
     error:error.message
   })
   }
+}
+
+export const forgatePasswordController = async (req,res)=>{
+  const {email} =req.body
+
+  if(!email){
+    return res.status(400).json({
+      success:false,
+      message:"email not found"
+    })
+  }
+
+  const user = await userModel.findOne({email})
+
+  if(!user) return res.status(404).json({
+    success:false,
+    message:"user not found"
+  })
+
+  const OTP = generateOTP();
+
+  const hashedOPT = bcrypt.hashSync(OTP,10)
+
+  await redis.set(`reset-password-hashed-${email}`,hashedOPT,"EX",5*60)
+
+  
+
+  
+
 }
