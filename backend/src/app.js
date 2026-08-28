@@ -6,6 +6,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import passport from "passport";
 import morgan from "morgan";
 import cookie from "cookie-parser";
+import userRoutes from "../src/routes/user.route.js"
 
 const app = express();
 
@@ -28,5 +29,6 @@ passport.use(
 );
 
 app.use("/auth", authRoutes);
+app.use("/api/user",userRoutes)
 
 export default app;
