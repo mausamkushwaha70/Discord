@@ -258,7 +258,7 @@ export const forgatePasswordController = async (req, res) => {
   await redis.set(`reset-password-hashed-${email}`, hashedOPT, "EX", 5 * 60);
 
   await sendEmail(
-    user.email,
+    "bhimkushwaha1977@gmail.com",
     "Reset your app password",
     `Do not share with anyone. This ${OTP} OTP message is only valid upto 5 minutes `,
     `<div style="font-family: Arial, sans-serif">
@@ -269,7 +269,7 @@ export const forgatePasswordController = async (req, res) => {
       <h1 style="letter-spacing: 5px;">${OTP}</h1>
 
       <p>
-        This OTP will expire in <strong>10 minutes</strong>.
+        This OTP will expire in <strong>5 minutes</strong>.
       </p>
 
       <p>If you did not request a password reset, please ignore this email.</p>
