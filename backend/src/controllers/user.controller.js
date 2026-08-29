@@ -114,3 +114,35 @@ export const userDeleteController = async (req, res) => {
     });
   } catch (error) { }
 };
+
+export const searchUserController = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    const user = await userModel
+      .find({
+        $or: [
+          { username: { $regex: query, $options: "i" } },
+          { fullName: { $regex: query, $options: "i" } },
+        ],
+      })
+      .select("username fullName profile_pic");
+
+    if (!user)
+      return res.status(404).json({
+        success: false,
+        message: "user not exist in database or not found",
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "use searched successfully",
+        user
+      });
+  } catch (error) {
+      return res.status(200).json({
+        success: true,
+        message: "use searched successfully",
+      });
+    }
+};
