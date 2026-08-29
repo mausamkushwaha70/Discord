@@ -22,7 +22,7 @@ export const authMiddleware = async(req, res, next)=> {
         message:"unauthorized"
     })
 
-    const user = await userModel.findById(decode.id).select("password")
+    const user = await userModel.findById(decode.id);
 
     if (!user) {
             return res.status(404).json({
