@@ -341,3 +341,39 @@ export const verifyOTP_Controller = async (req, res) => {
     });
   }
 };
+
+export const resetPassword = async(req,res)=>{
+    const {email,resetToken,newPassword} = req.body
+
+    if(!email || !resetToken|| !newPassword) return res.status(400).json({
+        success:false,
+        message:"email,resetToken and newpassword is required"
+    })
+
+    const hashedResetToken = await redis.get(`reset-token-hashedResetToken-${email}`)
+
+    if(!hashedResetToken) return res.status(400).json({
+        success:false,
+        message:"your session for reset password is expired pls try again"
+    })
+
+    const user = await userModel.findOne({email}).select("password")
+
+    if(!user) return res.status(404).json({
+        success:false,
+        message:"user not found"
+    })
+
+    user.password = newPassword
+
+    await user.save()
+
+  
+    await redis.del(`reset-token-hashedResetToken-${email}`)
+
+    return res.status(200).json({
+        success:true,
+        message:"password reset successfully"
+    })
+
+}
