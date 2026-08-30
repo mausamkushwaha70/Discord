@@ -1,6 +1,6 @@
 import express from "express"
 import {upload} from "../config/multer.js"
-import { forgatePasswordController, googleAuthcontroller, userLoginController, userLogoutController, userRegisterController } from "../controllers/auth.controller.js";
+import { forgatePasswordController, googleAuthcontroller, userLoginController, userLogoutController, userRegisterController, verifyOTP_Controller } from "../controllers/auth.controller.js";
 import passport from "passport";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { forgate } from "../controllers/forgateController.js";
@@ -16,7 +16,9 @@ router.get('/google/callback',passport.authenticate("google",{
 router.post('/user-logout',userLogoutController)
 
 router.get('/forgate', forgate)
-router.get("/forgate-password",authMiddleware,forgatePasswordController)
+router.get("/forgetpassword",authMiddleware,forgatePasswordController)
+router.post("/verify-otp",authMiddleware,verifyOTP_Controller)
+
 
 export default router;
 

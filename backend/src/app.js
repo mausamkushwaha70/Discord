@@ -28,7 +28,7 @@ passport.use(
     ),
 );
 
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
 
 export default app;

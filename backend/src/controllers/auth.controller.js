@@ -79,8 +79,8 @@ export const userLoginController = async (req, res) => {
     });
   }
 
-  const isExist = await userModel.findOne({ email }).select("password")
-  console.log(isExist)
+  const isExist = await userModel.findOne({ email }).select("password");
+  // console.log(isExist);
 
   if (!isExist) {
     return res.status(404).json({
@@ -236,32 +236,32 @@ export const forgatePasswordController = async (req, res) => {
   try {
     const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({
-      success: false,
-      message: "email not found",
-    });
-  }
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "email not found",
+      });
+    }
 
-  const user = await userModel.findOne({ email })
+    const user = await userModel.findOne({ email });
 
-  if (!user)
-    return res.status(404).json({
-      success: false,
-      message: "user not found",
-    });
+    if (!user)
+      return res.status(404).json({
+        success: false,
+        message: "user not found",
+      });
 
-  const OTP = generateOTP();
+    const OTP = generateOTP();
 
-  const hashedOPT = bcrypt.hashSync(OTP, 10);
+    const hashedOPT = bcrypt.hashSync(OTP, 10);
 
-  await redis.set(`reset-password-hashed-${email}`, hashedOPT, "EX", 5 * 60);
+    await redis.set(`reset-password-hashed-${email}`, hashedOPT, "EX", 5 * 60);
 
-  await sendEmail(
-    "bhimkushwaha1977@gmail.com",
-    "Reset your app password",
-    `Do not share with anyone. This ${OTP} OTP message is only valid upto 5 minutes `,
-    `<div style="font-family: Arial, sans-serif">
+    await sendEmail(
+      "mausamKkushwaha@gmail.com",
+      "Reset your app password",
+      `Do not share with anyone. This ${OTP} OTP message is only valid upto 5 minutes `,
+      `<div style="font-family: Arial, sans-serif">
       <h2>Password Reset Request</h2>
 
       <p>Your OTP for resetting your password is:</p>
@@ -274,18 +274,70 @@ export const forgatePasswordController = async (req, res) => {
 
       <p>If you did not request a password reset, please ignore this email.</p>
     </div>`,
-  );
+    );
 
-  return res.status(200).json({
-    success:true,
-    message:"otp send sucessfully"
-  })
+    return res.status(200).json({
+      success: true,
+      message: "otp send sucessfully",
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({
-      success:false,
-      message:"Internal server error",
-      error:error.message
-    })
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const verifyOTP_Controller = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    console.log(req.body)
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP is required",
+      });
+    }
+
+    const hashedOtp = await redis.get(`reset-password-hashed-${email}`);
+
+    if (!hashedOtp)
+      return res.status(404).json({
+        success: false,
+        message: "otp is expired or not found",
+      });
+
+    const isValid = bcrypt.compareSync(otp, hashedOtp);
+
+    if (!isValid)
+      return res.status(403).json({
+        success: false,
+        message: "Invalid otp",
+      });
+
+    await redis.del(`reset-password-hashed-${email}`);
+
+    const resetToken = tokenGenerate(email, "10min");
+    const hasehedResetToken = bcrypt.hashSync(resetToken,10);
+
+    await redis.set(
+      `reset-token-hashedResetToken-${email}`,
+      hasehedResetToken,
+      "EX",
+      10*60,
+    );
+    return res.status(200).json({
+      success: true,
+      message: "otp verified successfully",
+      resetToken,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
