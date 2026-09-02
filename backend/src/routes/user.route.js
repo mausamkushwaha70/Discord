@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.post("/get-me", authMiddleware, getMeController);
+router.get("/get-me", authMiddleware, getMeController);
 router.get("/get-user/:id", authMiddleware, getUserProfileController);
 router.patch("/update", authMiddleware, updateUserController);
 router.delete("/delete", authMiddleware, userDeleteController);

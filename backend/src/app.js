@@ -7,6 +7,7 @@ import passport from "passport";
 import morgan from "morgan";
 import cookie from "cookie-parser";
 import userRoutes from "../src/routes/user.route.js"
+import { error_middleware } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -31,4 +32,7 @@ passport.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
 
+
+
+app.use(error_middleware);
 export default app;

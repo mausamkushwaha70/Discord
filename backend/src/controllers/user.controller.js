@@ -1,21 +1,15 @@
 import userModel from "../models/user.model.js";
+import ApiError from "../utils/apiError.util.js";
+import ApiResponse from "../utils/apiResponse.util.js";
 
 export const getMeController = async (req, res) => {
   try {
     const user = await userModel.findById(req.user.id);
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "user not found",
-      });
-    }
+    if (!user) throw new ApiError(404, "user not found")
 
-    return res.status(200).json({
-      success: true,
-      message: "fetched myProfile",
-      data: user,
-    });
+    return res.status(200).json(200,user,"myProfile fetched successfuly");
+    
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -146,3 +140,4 @@ export const searchUserController = async (req, res) => {
       });
     }
 };
+// debouncing use in search user........

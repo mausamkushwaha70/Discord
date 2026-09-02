@@ -79,7 +79,7 @@ export const userLoginController = async (req, res) => {
     });
   }
 
-  const isExist = await userModel.findOne({ email }).select("password");
+  const isExist = await userModel.findOne({email}).select("password");
   // console.log(isExist);
 
   if (!isExist) {
