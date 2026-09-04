@@ -5,7 +5,7 @@ const serverSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    discreption:{
+    description:{
         type:String,
     },
     owner:{
