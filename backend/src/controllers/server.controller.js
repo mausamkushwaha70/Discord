@@ -50,6 +50,38 @@ export const createServer = async (req, res, next) => {
   }
 };
 
+export const getServer_Controller = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const server = await serverModel.findById(id);
+
+    if (!server) {
+      throw new ApiError(404, "Server not found");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, server, "Server fetched successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllServer_Controller = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const servers = await serverModel.find(id);
+    if (!servers) throw new ApiError(404, "server not found");
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, servers, "your server fetched successfully"));
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 // debouncing use in search user........
 
 // create server
