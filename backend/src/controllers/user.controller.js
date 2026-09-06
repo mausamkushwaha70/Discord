@@ -55,7 +55,7 @@ export const updateUserController = async (req, res) => {
       updateData.username = username;
     }
     if (fullName) {
-      updateData.fullname = fullname;
+      updateData.fullName = fullName;
     }
     if (phone) {
       updateData.phone = phone;

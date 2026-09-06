@@ -82,31 +82,55 @@ export const getAllServer_Controller = async (req, res, next) => {
   }
 };
 
-// debouncing use in search user........
-
-// create server
-// getAll server
-// update server
-// delete server
-
-// generate INviteCode
-// join server
-// -data by params
-// -find server on the basis of invite code
-// -throw error
-// -check is exist
-// leave server
-// serrch server
-
-const joinServer = async (req, res, next) => {
+export const serverUpdate_controller = async (req, res, next) => {
   try {
-    const { inviteCode } = req.params;
-    const server = await serverModel.findOne({ inviteCode });
-    if (!inviteCode) throw new ApiError(404, "invalid invite code ");
-    const alreadyExist = user.server.some((serverId) => {
-      user.server.serverId.toString() === server.id.toString();
-    });
+    //get srever Id
+    const { id } = req.params;
 
-    if (alreadyExist) throw new ApiError(409);
-  } catch (error) {}
+    if (!id) throw new ApiError(400, "Sever Id is required");
+
+    //find server
+    const server = await serverModel.findById(id);
+
+    if (!server) {
+      throw new ApiError(404, "server not found");
+    }
+
+    // get data form body
+    const { name, description, isPublic } = req.body;
+
+    // get file from multer
+    const { icon } = req.files;
+    const { banner } = req.files;
+
+    // updateServer data
+    const updateServer = {};
+    if (name) updateServer.name = name;
+    if (description) updateServer.description = description;
+    if (isPublic) updateServer.isPublic = isPublic;
+
+    // update icon and banner
+    if (icon) {
+      updateServer.icon = icon.buffer;
+    }
+    if (banner) {
+      updateServer.banner = banner.buffer;
+    }
+    const NewupdateServer = await serverModel.findByIdAndUpdate(
+      id,
+      updateServer,
+      { new: true },
+    );
+    console.log(NewupdateServer);
+    if (!NewupdateServer) throw new ApiError(404, "server not updated");
+
+    return res.status(200).json(
+        new ApiResponse(200, NewupdateServer, "Server updated successfully"),
+      );
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 };
+
+
