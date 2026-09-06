@@ -124,7 +124,9 @@ export const serverUpdate_controller = async (req, res, next) => {
     console.log(NewupdateServer);
     if (!NewupdateServer) throw new ApiError(404, "server not updated");
 
-    return res.status(200).json(
+    return res
+      .status(200)
+      .json(
         new ApiResponse(200, NewupdateServer, "Server updated successfully"),
       );
   } catch (error) {
@@ -133,4 +135,18 @@ export const serverUpdate_controller = async (req, res, next) => {
   }
 };
 
+export const server_Delete_controller = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id) throw new ApiError(404, "Server id not exists");
 
+    const serverDelete = await serverModel.findByIdAndDelete(id);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "Server delete Successfully"));
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
