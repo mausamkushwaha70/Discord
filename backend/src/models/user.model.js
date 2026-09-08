@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: 6,
-      select:false
+      select: false,
     },
 
     dob: {
@@ -59,12 +59,12 @@ const userSchema = new mongoose.Schema(
       default: "local",
     },
 
-    server: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "servers",
-      },
-    ],
+    // server: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "servers",
+    //   },
+    // ],
 
     friends: [
       {
@@ -80,14 +80,13 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", function () {
   if (this.isModified("password")) {
-    return this.password = bcrypt.hashSync(this.password, 10);
+    return (this.password = bcrypt.hashSync(this.password, 10));
   }
 });
 
-userSchema.methods.comparePass = function (password){
-    return bcrypt.compareSync(password, this.password)
-}
-
+userSchema.methods.comparePass = function (password) {
+  return bcrypt.compareSync(password, this.password);
+};
 
 const userModel = mongoose.model("user", userSchema);
 export default userModel;
