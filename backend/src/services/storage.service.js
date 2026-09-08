@@ -12,7 +12,7 @@ export const sendFile = async (file, fileName) => {
     let obj = {
         file,
         fileName,
-        folderName: "Discord",
+        folder: "Discord",
     };
 
     return await storageInstance.upload(obj);

@@ -9,6 +9,7 @@ import cookie from "cookie-parser";
 import userRoutes from "../src/routes/user.route.js"
 import { error_middleware } from "./middlewares/error.middleware.js";
 import serverRouter from "../src/routes/server.route.js"
+import ServerMember_Router from "../src/routes/serverMember.route.js"
 
 const app = express();
 
@@ -33,6 +34,8 @@ passport.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/user",userRoutes)
 app.use("/api/server",serverRouter)
+app.use("/api/serverMember",ServerMember_Router)
+
 
 
 app.use(error_middleware);

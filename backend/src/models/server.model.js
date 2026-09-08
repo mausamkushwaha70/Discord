@@ -34,5 +34,5 @@ const serverSchema = new mongoose.Schema({
 })
 
 
-const serverModel = mongoose.model("servers",serverSchema)
+const serverModel = mongoose.model("server",serverSchema)
 export default serverModel;
