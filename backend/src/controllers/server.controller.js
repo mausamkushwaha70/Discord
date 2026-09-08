@@ -1,6 +1,7 @@
 import roleModel from "../models/roles.model.js";
 import serverModel from "../models/server.model.js";
 import serverMember_Model from "../models/serverMember.model.js";
+import userModel from "../models/user.model.js";
 import { createServerMember } from "../services/createServerMember.service.js";
 import { sendFile } from "../services/storage.service.js";
 import ApiError from "../utils/apiError.util.js";
@@ -47,25 +48,25 @@ export const createServer = async (req, res, next) => {
     });
 
     const ownerRole = await roleModel.create({
-      name:"owner",
-      server:server._id,
-      permissions:[
+      name: "owner",
+      server: server._id,
+      permissions: [
         "MANAGE_SERVER",
         "MANAGE_CHANNEL",
         "MANAGE_ROLES",
-        "MANAGE_MESSAGES"],
-      Position:100,
-
-    })
+        "MANAGE_MESSAGES",
+      ],
+      Position: 100,
+    });
 
     // create server Member
-    await createServerMember(userId,server._id,[ownerRole._id])
+    await createServerMember(userId, server._id, [ownerRole._id]);
 
     return res
       .status(201)
       .json(new ApiResponse(201, server, "Server created successfully"));
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -130,11 +131,11 @@ export const serverUpdate_controller = async (req, res, next) => {
 
     // update icon and banner
     if (icon) {
-     let image = await sendFile(icon[0].buffer, icon[0].originalname)
+      let image = await sendFile(icon[0].buffer, icon[0].originalname);
       updateServer.icon = image.url;
     }
     if (banner) {
-       let image = await sendFile(banner[0].buffer, banner[0].originalname)
+      let image = await sendFile(banner[0].buffer, banner[0].originalname);
       updateServer.banner = image.url;
     }
     const NewupdateServer = await serverModel.findByIdAndUpdate(
@@ -165,9 +166,47 @@ export const server_Delete_controller = async (req, res, next) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200,serverDelete,"Server delete Successfully"));
+      .json(new ApiResponse(200, serverDelete, "Server delete Successfully"));
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+};
+
+export const serverJoin = async (req, res, next) => {
+  try {
+    const { inviteCode } = req.params;
+
+    const server = await serverModel.findOne({ inviteCode });
+
+    if (!server) throw new ApiError(404, "server not found");
+
+    const user = await userModel.findById(req.user.id);
+
+    if(!user) throw new ApiError(404,"user not found")
+
+    const alreadyExist = (user.server || []).some(
+      (serverId) => serverId.toString() === server._id.toString(),
+    );
+
+    if (alreadyExist)
+      throw new ApiError(400, "You are already a Member of this server");
+
+    const memberRole = await roleModel.findOne({
+      server: server._id,
+      name: "member",
+    });
+
+    if (!memberRole) {
+      throw new ApiError(404, "Member role not found");
+    }
+
+    await createServerMember(req.user.id, server._id, [memberRole._id]);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, server, "Server joined Successfully"));
+  } catch (error) {
     next(error);
   }
 };
