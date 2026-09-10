@@ -6,10 +6,11 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import passport from "passport";
 import morgan from "morgan";
 import cookie from "cookie-parser";
-import userRoutes from "../src/routes/user.route.js"
+import userRoutes from "../src/routes/user.route.js";
 import { error_middleware } from "./middlewares/error.middleware.js";
-import serverRouter from "../src/routes/server.route.js"
-import ServerMember_Router from "../src/routes/serverMember.route.js"
+import serverRouter from "../src/routes/server.route.js";
+import ServerMember_Router from "../src/routes/serverMember.route.js";
+import roleRouter from "../src/routes/role.route.js";
 
 const app = express();
 
@@ -19,24 +20,23 @@ app.use(morgan("combined"));
 
 app.use(passport.initialize());
 passport.use(
-    new GoogleStrategy(
-        {
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "http://localhost:3000/auth/google/callback",
-        },
-        (_, ___, profile, done) => {
-            return done(null, profile);
-        },
-    ),
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/callback",
+    },
+    (_, ___, profile, done) => {
+      return done(null, profile);
+    },
+  ),
 );
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user",userRoutes)
-app.use("/api/server",serverRouter)
-app.use("/api/serverMember",ServerMember_Router)
-
-
+app.use("/api/user", userRoutes);
+app.use("/api/server", serverRouter);
+app.use("/api/serverMember", ServerMember_Router);
+app.use("/api/role", roleRouter);
 
 app.use(error_middleware);
 export default app;
