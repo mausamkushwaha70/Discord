@@ -3,6 +3,7 @@ import {
   createServer,
   getAllServer_Controller,
   getServer_Controller,
+  leaveServer,
   server_Delete_controller,
   serverJoin,
   serverUpdate_controller,
@@ -34,5 +35,5 @@ router.patch(
   serverUpdate_controller,
 );
 router.delete("/serverDelete/:id", authMiddleware, server_Delete_controller);
-
+router.delete("/leave/:serverId",authMiddleware,leaveServer)
 export default router;

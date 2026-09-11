@@ -210,3 +210,31 @@ export const serverJoin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const leaveServer = async (req,res, next) =>{
+  try {
+    const {serverId} = req.params;
+  const server = await serverModel.findById(serverId)
+
+  if(!server) throw new ApiError(404,"Server is not found");
+
+  if(server.owner.toString===req.user.id.toString()) throw new ApiError(400,"Server owner can't leave the server");
+
+  const member = await serverMember_Model.findOne({
+    user:req.user.id,
+    server:serverId
+  });
+
+  if(!member) throw new ApiError(404,"you are not member of this server");
+    
+  await serverMember_Model.findByIdAndDelete(member._id);
+
+  res.status(200).json(
+    new ApiResponse(200,"server leave seccessfully")
+  )
+  } catch (error) {
+    next(error)
+  }
+
+
+}
