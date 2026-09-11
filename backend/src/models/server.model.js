@@ -10,7 +10,7 @@ const serverSchema = new mongoose.Schema({
     },
     owner:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"users"
+        ref:"user"
     },
     icon:{
         type:String,

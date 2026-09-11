@@ -4,18 +4,18 @@ const serverMember_Schema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "user",
     },
 
     server: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "servers",
+      ref: "server",
     },
 
     roles: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "roles",
+        ref: "role",
       },
     ],
   },

@@ -59,17 +59,17 @@ const userSchema = new mongoose.Schema(
       default: "local",
     },
 
-    // server: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "servers",
-    //   },
-    // ],
+    server: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "server",
+      },
+    ],
 
     friends: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users",
+        ref: "user",
       },
     ],
   },

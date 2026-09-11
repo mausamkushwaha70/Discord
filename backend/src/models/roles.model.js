@@ -14,7 +14,7 @@ const role_Schema = new mongoose.Schema(
 
     server: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "servers",
+      ref: "server",
     },
 
     permissions: {
