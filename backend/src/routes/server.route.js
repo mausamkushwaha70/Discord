@@ -23,7 +23,7 @@ router.post(
   createServer,
 );
 router.post("/joinServer/:inviteCode", authMiddleware, serverJoin);
-router.get("/get_server/:id", authMiddleware, getServer_Controller);
+router.get("/get_server/:serverId", authMiddleware, getServer_Controller);
 router.get("/get_allServer", authMiddleware, getAllServer_Controller);
 router.patch(
   "/updateServer/:id",

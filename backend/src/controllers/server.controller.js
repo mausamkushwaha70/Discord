@@ -62,6 +62,16 @@ export const createServer = async (req, res, next) => {
     // create server Member
     await createServerMember(userId, server._id, [ownerRole._id]);
 
+      const memberRole = await roleModel.create({
+      name: "member",
+      server: server._id,
+      permissions: ["MANAGE_MESSAGES",],
+      Position: 10,
+    });
+
+    console.log(memberRole)
+
+
     return res
       .status(201)
       .json(new ApiResponse(201, server, "Server created successfully"));
@@ -196,6 +206,8 @@ export const serverJoin = async (req, res, next) => {
       server: server._id,
       name: "member",
     });
+
+
 
     if (!memberRole) {
       throw new ApiError(404, "Member role not found");

@@ -33,3 +33,39 @@ export const createRole = async (req, res, next) => {
     next(error);
   }
 };
+
+export const get_SingleRole = async (req, res, next) => {
+  try {
+    const { roleId } = req.params;
+    if (!roleId) throw new ApiError(400, "roleId is required");
+    const role = await roleModel
+      .findById(roleId)
+      .select("name server permissions");
+    if (!role) {
+      throw new ApiError(404, "Role not found");
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(200, role, "Role fetched successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllRoles = async (req, res, next) => {
+  try {
+    const { serverId } = req.params;
+    const server = await serverModel.findById(serverId);
+    if (!server) throw new ApiError(400, "server not found");
+    const roles = await roleModel
+      .find({ server: serverId })
+      .select("name server")
+      .populate("server", "name");
+    if (!roles) throw new ApiError(404, "roles not found");
+    return res
+      .status(200)
+      .json(new ApiResponse(200, roles, "Roles successfully fetched"));
+  } catch (error) {
+    next(error);
+  }
+};
