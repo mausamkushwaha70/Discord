@@ -11,8 +11,14 @@ import { error_middleware } from "./middlewares/error.middleware.js";
 import serverRouter from "../src/routes/server.route.js";
 import ServerMember_Router from "../src/routes/serverMember.route.js";
 import roleRouter from "../src/routes/role.route.js";
+import http from "http"
+import { initializeSocket } from "./socket.io/socket.io.js";
+
 
 const app = express();
+
+export const server = http.createServer(app)
+initializeSocket(server)
 
 app.use(cookie());
 app.use(express.json());
