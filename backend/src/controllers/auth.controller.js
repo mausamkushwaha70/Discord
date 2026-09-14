@@ -5,6 +5,7 @@ import { tokenGenerate } from "../utils/token.utils.js";
 import redis from "../config/redis.config.js";
 import { generateOTP } from "../utils/otp.utill.js";
 import { sendEmail } from "../services/email.service.js";
+import asyncHandler from "../middlewares/asyncHndler.js";
 
 export const userRegisterController = async (req, res) => {
   try {
@@ -69,7 +70,7 @@ export const userRegisterController = async (req, res) => {
   }
 };
 
-export const userLoginController = async (req, res) => {
+export const userLoginController = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -131,7 +132,7 @@ export const userLoginController = async (req, res) => {
     message: "successfully loggedIn",
     isExist,
   });
-};
+});
 
 export const googleAuthcontroller = async (req, res) => {
   try {
