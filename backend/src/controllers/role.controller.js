@@ -1,3 +1,4 @@
+import asyncHandler from "../middlewares/asyncHndler.js";
 import roleModel from "../models/roles.model.js";
 import serverModel from "../models/server.model.js";
 import ApiError from "../utils/apiError.util.js";
@@ -69,3 +70,28 @@ export const getAllRoles = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateRole = asyncHandler(async (req, res) => {
+  const { roleId, serverId } = req.params;
+  const { name, permissions, color, position } = req.body;
+
+  const server = await serverModel.findById(serverId);
+
+  if (!server) throw new ApiError(400, "server not found");
+
+  if (server.owner.toString() !== req.user._id.toString())
+    throw new ApiError("only owner can update Role");
+
+  const role = await roleModel.findOne({
+    _id: roleId,
+    server: serverId,
+  });
+
+  if (!role) throw new ApiError(404, "Role not found");
+
+  if (role.name !== undefined) role.name = name;
+  if (role.permissions !== undefined) role.permissions = permissions;
+  if (role) await role.save();
+
+  return res.status(200).json(new ApiResponse(200, "Role update successfully"));
+});
