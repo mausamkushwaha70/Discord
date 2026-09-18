@@ -32,3 +32,19 @@ export const createChannel = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, channel, "Channel successfully creaated"));
 });
+
+export const getChannel = asyncHandler(async (req, res) => {
+  const { serverId } = req.params;
+  if (!serverId) {
+    throw new ApiError(404, "serverId is required");
+  }
+
+  const channel = await channelModel.find({ server: serverId });
+  if (!channel) {
+    throw new ApiError(404, "channel not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, channel, "channels fetched successfully"));
+});
