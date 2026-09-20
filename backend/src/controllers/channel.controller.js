@@ -79,3 +79,25 @@ export const updateChannel = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, updatedChannel, "Channel successfully updated"));
 });
+
+export const deleteChannel = asyncHandler(async(req,res)=>{
+  const {serverId,channelId} = req.params;
+  const server = await serverModel.findById(serverId)
+  if(!server) throw new ApiError(404,"Server not found")
+  
+  const channel = await channelModel.findById(channelId)
+  if(!channel) throw new ApiError(404,"channel not found")
+
+  if(server.owner.toString()!== req.user._id.toString()){
+    throw new ApiError(404,"only owner can delete channel")
+  }
+
+  const del_channel = await channelModel.findByIdAndDelete(channelId)
+  if(!del_channel){
+    throw new ApiError(403,"channel not deleted")
+  }
+  
+  req.status(200).json(
+    new ApiResponse(200,"channel deleted successfully")
+  ) 
+})
