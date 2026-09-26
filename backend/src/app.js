@@ -14,6 +14,7 @@ import roleRouter from "../src/routes/role.route.js";
 import http from "http"
 import { initializeSocket } from "./socket.io/socket.io.js";
 import channelRouter from "../src/routes/channel.route.js"
+import messageRouter from "../src/routes/message.routes.js"
 
 
 const app = express();
@@ -45,6 +46,7 @@ app.use("/api/server", serverRouter);
 app.use("/api/serverMember", ServerMember_Router);
 app.use("/api/role", roleRouter);
 app.use("/api/channel",channelRouter)
+app.use("/api/message",messageRouter)
 
 app.use(error_middleware);
 export default app;
